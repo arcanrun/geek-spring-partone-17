@@ -79,6 +79,14 @@ public class UserRepository {
         }
     }
 
+    public boolean deleteById(int id) throws SQLException{
+        try (PreparedStatement stmt = conn.prepareStatement(
+                "delete from users where id = ? limit 1")) {
+            stmt.setInt(1, id);
+            return stmt.execute();
+        }
+    }
+
     private void createTableIfNotExists(Connection conn) throws SQLException {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute("create table if not exists users (\n" +

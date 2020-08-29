@@ -70,6 +70,15 @@ public class UserRepository {
         return res;
     }
 
+    public void update(User user) throws SQLException{
+        try (PreparedStatement stmt = conn.prepareStatement(
+                "update users set login = ? where id = ?")) {
+            stmt.setString(1, user.getLogin());
+            stmt.setInt(2, user.getId());
+            stmt.execute();
+        }
+    }
+
     private void createTableIfNotExists(Connection conn) throws SQLException {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute("create table if not exists users (\n" +

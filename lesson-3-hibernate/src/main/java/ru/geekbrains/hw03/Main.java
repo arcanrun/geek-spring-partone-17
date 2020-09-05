@@ -6,6 +6,7 @@ import ru.geekbrains.hw03.entities.Product;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -61,28 +62,31 @@ public class Main {
             showMenu();
 
             String reader = scanner.nextLine();
+            try {
+                if (reader.equals("1")) {
+                    buyersAndTheirProducts();
+                }
 
-            if (reader.equals("1")) {
-                buyersAndTheirProducts();
+                if (reader.equals("2")) {
+                    productAndTheirBuyers();
+                }
+
+                if (reader.equals("3")) {
+                    deleteUser();
+                }
+
+                if (reader.equals("4")) {
+                    deleteProduct();
+                }
+
+                if (reader.equals("/end")) {
+                    break;
+                }
+            } catch (NoResultException e) {
+                System.out.println("Search index not found!");
             }
 
-            if (reader.equals("2")) {
-                productAndTheirBuyers();
-            }
-
-            if (reader.equals("3")) {
-                deleteUser();
-            }
-
-            if (reader.equals("4")) {
-                deleteProduct();
-            }
-
-            if (reader.equals("/end")) {
-                break;
-            }
         }
-
 
         scanner.close();
         em.close();

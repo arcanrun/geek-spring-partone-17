@@ -62,4 +62,13 @@ public class Product {
     public void setBuyers(List<Buyer> buyers) {
         this.buyers = buyers;
     }
+
+    public List<Buyer> getBuyers() {
+        return buyers;
+    }
+
+    @Override
+    public String toString() {
+        return id + " " + title + " " + price;
+    }
 }

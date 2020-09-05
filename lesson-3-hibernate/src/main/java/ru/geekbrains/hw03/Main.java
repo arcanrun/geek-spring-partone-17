@@ -7,14 +7,20 @@ import ru.geekbrains.hw03.entities.Product;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
 public class Main {
+    private static EntityManagerFactory entityManagerFactory;
+    private static EntityManager em;
+    private static Scanner scanner;
+
     public static void main(String[] args) {
-        EntityManagerFactory entityManagerFactory = new Configuration()
+        entityManagerFactory = new Configuration()
                 .configure("hibernate.cfg.xml")
                 .buildSessionFactory();
 
-        EntityManager em = entityManagerFactory.createEntityManager();
+        em = entityManagerFactory.createEntityManager();
 // ================== init DB =====================
 //        em.getTransaction().begin();
 //
@@ -50,6 +56,98 @@ public class Main {
 //        em.getTransaction().commit();
 //        em.close();
 // ============== init DB end ==============
+        scanner = new Scanner(System.in);
 
+        while (true) {
+            showMenu();
+
+            String reader = scanner.nextLine();
+
+            if (reader.equals("1")) {
+                showAllUsers();
+            }
+
+            if (reader.equals("2")) {
+                showAllProdutcs();
+            }
+
+            if (reader.equals("/end")) {
+                break;
+            }
+        }
+
+
+        scanner.close();
+        em.close();
+    }
+
+    private static void showAllProdutcs() {
+        List<Product> productList = em.createQuery("from Product", Product.class).getResultList();
+        for (Product p : productList) {
+            System.out.println(p);
+        }
+        System.out.println();
+        System.out.println("CHOOSE PRODUCT TO SHOW BUYERS:");
+        while (true) {
+            String reader = scanner.nextLine();
+            if (reader.equals("0")) {
+                break;
+            }
+
+            try {
+                Integer.parseInt(reader);
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
+            Product p = em.createQuery("Select p from Product p where p.id = :id", Product.class).setParameter("id", Integer.parseInt(reader)).getSingleResult();
+            List<Buyer> buyerList = p.getBuyers();
+            System.out.println();
+            System.out.println("PRODUCT: " + p + " --> BUYERS:");
+            for (Buyer b : buyerList) {
+                System.out.println(b);
+            }
+            System.out.println();
+            break;
+        }
+
+    }
+
+    private static void showAllUsers() {
+        List<Buyer> buyers = em.createQuery("from Buyer", Buyer.class).getResultList();
+        System.out.println("0 Back to the Main menu");
+        for (Buyer b : buyers) {
+            System.out.println(b);
+        }
+        System.out.println();
+        System.out.println("CHOOSE BUYERS TO SHOW PRODUCTS:");
+        while (true) {
+            String reader = scanner.nextLine();
+            if (reader.equals("0")) {
+                break;
+            }
+
+            try {
+                Integer.parseInt(reader);
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
+            Buyer b = em.createQuery("Select b from Buyer b where b.id = :id", Buyer.class).setParameter("id", Integer.parseInt(reader)).getSingleResult();
+            List<Product> productList = b.getProducts();
+            System.out.println();
+            System.out.println("BUYER: " + b + " --> PRODUCTS:");
+            for (Product p : productList) {
+                System.out.println(p);
+            }
+            System.out.println();
+            break;
+        }
+    }
+
+    private static void showMenu() {
+        System.out.println("====================");
+        System.out.println("1. Show users\n2. Show products");
+        System.out.println("====================");
     }
 }

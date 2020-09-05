@@ -6,7 +6,6 @@ import ru.geekbrains.hw03.entities.Product;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -64,11 +63,19 @@ public class Main {
             String reader = scanner.nextLine();
 
             if (reader.equals("1")) {
-                showAllUsers();
+                buyersAndTheirProducts();
             }
 
             if (reader.equals("2")) {
-                showAllProdutcs();
+                productAndTheirBuyers();
+            }
+
+            if (reader.equals("3")) {
+                deleteUser();
+            }
+
+            if (reader.equals("4")) {
+                deleteProduct();
             }
 
             if (reader.equals("/end")) {
@@ -81,11 +88,52 @@ public class Main {
         em.close();
     }
 
-    private static void showAllProdutcs() {
-        List<Product> productList = em.createQuery("from Product", Product.class).getResultList();
-        for (Product p : productList) {
-            System.out.println(p);
+    private static void deleteProduct() {
+        showAllProducts();
+        while (true) {
+            String reader = scanner.nextLine();
+            if (reader.equals("0")) {
+                break;
+            }
+
+            try {
+                Integer.parseInt(reader);
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
+            em.getTransaction().begin();
+            em.createQuery("delete from Product p where p.id = :id").setParameter("id", Integer.parseInt(reader)).executeUpdate();
+            em.getTransaction().commit();
+            showAllProducts();
+            break;
         }
+    }
+
+    private static void deleteUser() {
+        showAllUsers();
+        while (true) {
+            String reader = scanner.nextLine();
+            if (reader.equals("0")) {
+                break;
+            }
+
+            try {
+                Integer.parseInt(reader);
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
+            em.getTransaction().begin();
+            em.createQuery("delete from Buyer b where b.id = :id").setParameter("id", Integer.parseInt(reader)).executeUpdate();
+            em.getTransaction().commit();
+            showAllUsers();
+            break;
+        }
+    }
+
+    private static void productAndTheirBuyers() {
+        showAllProducts();
         System.out.println();
         System.out.println("CHOOSE PRODUCT TO SHOW BUYERS:");
         while (true) {
@@ -113,12 +161,15 @@ public class Main {
 
     }
 
-    private static void showAllUsers() {
-        List<Buyer> buyers = em.createQuery("from Buyer", Buyer.class).getResultList();
-        System.out.println("0 Back to the Main menu");
-        for (Buyer b : buyers) {
-            System.out.println(b);
+    private static void showAllProducts() {
+        List<Product> productList = em.createQuery("from Product", Product.class).getResultList();
+        for (Product p : productList) {
+            System.out.println(p);
         }
+    }
+
+    private static void buyersAndTheirProducts() {
+        showAllUsers();
         System.out.println();
         System.out.println("CHOOSE BUYERS TO SHOW PRODUCTS:");
         while (true) {
@@ -145,9 +196,16 @@ public class Main {
         }
     }
 
+    private static void showAllUsers() {
+        List<Buyer> buyers = em.createQuery("from Buyer", Buyer.class).getResultList();
+        for (Buyer b : buyers) {
+            System.out.println(b);
+        }
+    }
+
     private static void showMenu() {
         System.out.println("====================");
-        System.out.println("1. Show users\n2. Show products");
+        System.out.println("1. Show users\n2. Show products\n3. Delete user\n4. Delete product");
         System.out.println("====================");
     }
 }

@@ -1,12 +1,10 @@
 package ru.geekbrains.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.object.SqlCall;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import ru.geekbrains.persistance.User;
 import ru.geekbrains.persistance.UserRepository;
 
@@ -35,8 +33,37 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public String updateUser(User user) {
-        // TODO написать метод userRepository.update();
+    public String updateUser(User user) throws SQLException {
+        userRepository.update(user);
         return "redirect:/user";
     }
+
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable int id) throws SQLException {
+        boolean res = userRepository.deleteById(id);
+        if (res) {
+            System.out.printf("User with id: %s has been deleted\n", id);
+        } else {
+            System.out.printf("User with id: %s is not deleted\n", id);
+        }
+        return "redirect:/user";
+    }
+
+    @GetMapping("/add")
+    public String addUser(Model model) throws SQLException {
+        List<User> usersList = userRepository.getAllUsers();
+        int id = 0;
+        if (usersList.size() > 0) {
+            id = usersList.get(usersList.size() - 1).getId();
+        }
+        model.addAttribute("user", new User(id, "", ""));
+        return "addUser";
+    }
+
+    @PostMapping("/add")
+    public String addUser(User user) throws SQLException {
+        userRepository.insert(user);
+        return "redirect:/user";
+    }
+
 }

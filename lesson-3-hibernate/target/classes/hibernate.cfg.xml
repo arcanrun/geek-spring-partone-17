@@ -20,5 +20,7 @@
 
         <mapping class="ru.geekbrains.User"/>
         <mapping class="ru.geekbrains.Contact"/>
+        <mapping class="ru.geekbrains.hw03.entities.Buyer"/>
+        <mapping class="ru.geekbrains.hw03.entities.Product"/>
     </session-factory>
 </hibernate-configuration>

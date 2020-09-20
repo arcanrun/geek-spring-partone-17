@@ -74,16 +74,16 @@
             </table>
             <nav aria-label="...">
                 <ul class="pagination">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    <li class="page-item " th:classappend="${productList.getNumber() == 0 ? 'disabled': '' }">
+                        <a class="page-link" th:href="@{/products(pageIndex=${productList.getNumber() == 0 ? 1 : productList.getNumber() })}" tabindex="-1">Previous</a>
                     </li>
                     <li class="page-item"
                         th:classappend="${productList.getNumber() + 1 == i ? 'active' : ''  }"
                         th:each="i : ${#numbers.sequence(1, productList.getTotalPages())}">
                         <a class="page-link" th:href="@{/products(pageIndex=${i})}" th:text="${i}"/>
                     </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
+                    <li class="page-item" th:classappend="${productList.getNumber() + 1 == productList.getTotalPages() ? 'disabled' : '' }">
+                        <a class="page-link" th:href="@{/products(pageIndex=${productList.getNumber() + 1 == productList.getTotalPages() ? productList.getNumber() + 1 : productList.getNumber() + 2})}">Next</a>
                     </li>
                 </ul>
             </nav>

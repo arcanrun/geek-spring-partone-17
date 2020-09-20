@@ -1,5 +1,6 @@
 package ru.geekbrains.service;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 import ru.geekbrains.persist.entity.Product;
 
@@ -23,4 +24,6 @@ public interface ProductService {
     Optional<Product> findById(Integer id);
 
     public void deleteById(Integer id);
+
+    public List<Product> findAll(BigDecimal minPrice, BigDecimal maxPrice);
 }

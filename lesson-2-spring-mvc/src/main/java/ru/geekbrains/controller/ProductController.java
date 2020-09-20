@@ -1,16 +1,17 @@
 package ru.geekbrains.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.geekbrains.persist.entity.Product;
 import ru.geekbrains.service.ProductService;
-import sun.awt.ModalExclude;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/products")
@@ -23,19 +24,16 @@ public class ProductController {
     }
 
     @GetMapping
-    public String getAllProducts(Model model, @RequestParam(required = false) BigDecimal minPrice, @RequestParam(required = false) BigDecimal maxPrice) {
-        List<Product> productList;
-        if (minPrice != null && maxPrice == null) {
-            productList = productService.findByPriceGreaterThanEqual(minPrice);
-        } else if (minPrice == null && maxPrice != null) {
-            productList = productService.findByPriceLessThanEqual(maxPrice);
-        } else if (minPrice != null && maxPrice != null) {
-            productList = productService.findByPriceBetween(minPrice, maxPrice);
-        } else {
-            productList = productService.findAll();
-        }
-
-        model.addAttribute("productList", productList);
+    public String getAllProducts(
+                                 Model model,
+                                 @RequestParam(required = false) BigDecimal minPrice,
+                                 @RequestParam(required = false) BigDecimal maxPrice
+    ) {
+        List<Product> productPage = productService.findAll(minPrice, maxPrice);
+        model.addAttribute("productList", productPage);
+        System.out.println(minPrice);
+        System.out.println(maxPrice);
+        System.out.println(productPage);
         return "all_products";
     }
 

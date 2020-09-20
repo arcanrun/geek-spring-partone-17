@@ -1,6 +1,8 @@
 package ru.geekbrains.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import ru.geekbrains.persist.entity.Product;
 import ru.geekbrains.persist.repo.ProductRepostitory;
@@ -51,6 +53,23 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteById(Integer id) {
         productRepostitory.deleteById(id);
+    }
+
+    @Override
+    public List<Product> findAll(BigDecimal minPrice, BigDecimal maxPrice) {
+        Specification<Product> spec = Specification.where(null);
+
+        if (minPrice != null) {
+            assert spec != null;
+            spec = spec.and(ProductSpecification.priceGreaterThanOrEqual(minPrice));
+        }
+
+        if (maxPrice != null) {
+            assert spec != null;
+            spec = spec.and(ProductSpecification.priceLesserThanOrEqual(maxPrice));
+        }
+
+        return productRepostitory.findAll(spec);
     }
 
 

@@ -64,8 +64,8 @@
                     <td th:text="${p.title}">product title</td>
                     <td th:text="${p.price}">product price</td>
                     <td>
-                        <a class="btn btn-success" th:href="@{/product/{id}(id = ${p.id})}"><i class="fas fa-edit"></i></a>
-                        <form class="d-inline" th:action="@{/product/{id}/delete(id = ${p.id})}" th:method="delete">
+                        <a class="btn btn-success" th:href="@{/products/{id}(id = ${p.id})}"><i class="fas fa-edit"></i></a>
+                        <form class="d-inline" th:action="@{/products/{id}/delete(id = ${p.id})}" th:method="delete">
                             <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
                         </form>
                     </td>

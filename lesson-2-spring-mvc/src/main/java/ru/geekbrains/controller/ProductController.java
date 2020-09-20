@@ -3,15 +3,14 @@ package ru.geekbrains.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ru.geekbrains.persist.entity.Product;
 import ru.geekbrains.service.ProductService;
+import sun.awt.ModalExclude;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/products")
@@ -40,6 +39,20 @@ public class ProductController {
         return "all_products";
     }
 
+    @GetMapping("/{id}")
+    public String editProduct(@PathVariable("id") Integer id, Model model) {
+        Optional<Product> productOptional = productService.findById(id);
+
+        if (!productOptional.isPresent()) {
+            return "redirect:/products";
+        }
+
+        Product product = productOptional.get();
+        model.addAttribute("product", product);
+
+        return "product_form";
+    }
+
 
     @GetMapping("/new")
     public String addNewProductsForm(Model model) {
@@ -47,13 +60,18 @@ public class ProductController {
         return "product_form";
     }
 
-    @PostMapping("/new")
+    @PostMapping("/update")
     public String addNewProduct(Product product) {
         if (product.getPrice().compareTo(BigDecimal.valueOf(0)) <= 0) {
             return "redirect:/products";
-
         }
         productService.save(product);
+        return "redirect:/products";
+    }
+
+    @DeleteMapping("/{id}/delete")
+    public String deleteProduct(@PathVariable("id") Integer id){
+        productService.deleteById(id);
         return "redirect:/products";
     }
 

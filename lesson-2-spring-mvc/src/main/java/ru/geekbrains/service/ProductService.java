@@ -5,8 +5,9 @@ import ru.geekbrains.persist.entity.Product;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
-@Repository
+
 public interface ProductService {
 
     public List<Product>  findByPriceGreaterThanEqual(BigDecimal price);
@@ -18,4 +19,8 @@ public interface ProductService {
     public List<Product> findAll();
 
     public void save(Product product);
+
+    Optional<Product> findById(Integer id);
+
+    public void deleteById(Integer id);
 }

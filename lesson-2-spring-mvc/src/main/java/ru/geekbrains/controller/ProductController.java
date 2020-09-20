@@ -2,6 +2,8 @@ package ru.geekbrains.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,15 +27,15 @@ public class ProductController {
 
     @GetMapping
     public String getAllProducts(
-                                 Model model,
-                                 @RequestParam(required = false) BigDecimal minPrice,
-                                 @RequestParam(required = false) BigDecimal maxPrice
+            Model model,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Integer pageIndex,
+            @RequestParam(required = false, defaultValue = "5") Integer pageSize
     ) {
-        List<Product> productPage = productService.findAll(minPrice, maxPrice);
+        System.out.println("pageSize===>" + pageSize);
+        Page<Product> productPage = productService.findAll(minPrice, maxPrice, pageIndex, pageSize);
         model.addAttribute("productList", productPage);
-        System.out.println(minPrice);
-        System.out.println(maxPrice);
-        System.out.println(productPage);
         return "all_products";
     }
 
@@ -68,7 +70,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}/delete")
-    public String deleteProduct(@PathVariable("id") Integer id){
+    public String deleteProduct(@PathVariable("id") Integer id) {
         productService.deleteById(id);
         return "redirect:/products";
     }

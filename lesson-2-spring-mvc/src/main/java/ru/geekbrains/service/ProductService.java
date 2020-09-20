@@ -1,6 +1,7 @@
 package ru.geekbrains.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import ru.geekbrains.persist.entity.Product;
 
@@ -11,7 +12,7 @@ import java.util.Optional;
 
 public interface ProductService {
 
-    public List<Product>  findByPriceGreaterThanEqual(BigDecimal price);
+    public List<Product> findByPriceGreaterThanEqual(BigDecimal price);
 
     public List<Product> findByPriceLessThanEqual(BigDecimal prcie);
 
@@ -25,5 +26,5 @@ public interface ProductService {
 
     public void deleteById(Integer id);
 
-    public List<Product> findAll(BigDecimal minPrice, BigDecimal maxPrice);
+    public Page<Product> findAll(BigDecimal minPrice, BigDecimal maxPrice, Integer pageIndex, Integer pageSize);
 }

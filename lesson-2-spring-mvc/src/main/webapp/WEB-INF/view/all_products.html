@@ -59,7 +59,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="p : ${productList}">
+                <tr th:each="p : ${productList.getContent()}">
                     <th scope="row" th:text="${p.id}">1</th>
                     <td th:text="${p.title}">product title</td>
                     <td th:text="${p.price}">product price</td>

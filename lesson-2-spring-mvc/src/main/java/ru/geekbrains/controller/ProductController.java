@@ -1,6 +1,5 @@
 package ru.geekbrains.controller;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.geekbrains.persist.entity.Product;
-import ru.geekbrains.persist.repo.ProductRepostitory;
+import ru.geekbrains.service.ProductService;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,33 +16,30 @@ import java.util.List;
 @Controller
 @RequestMapping("/products")
 public class ProductController {
-    private ProductRepostitory productRepostitory;
+    private ProductService productService;
 
     @Autowired
-    public void setProductRepostitory(ProductRepostitory productRepostitory) {
-        this.productRepostitory = productRepostitory;
+    public void setProductService(ProductService productService) {
+        this.productService = productService;
     }
 
     @GetMapping
     public String getAllProducts(Model model, @RequestParam(required = false) BigDecimal minPrice, @RequestParam(required = false) BigDecimal maxPrice) {
         List<Product> productList;
-        if(minPrice != null && maxPrice == null){
-            productList = productRepostitory.findByPriceGreaterThanEqual(minPrice);
-        }
-        else if(minPrice == null && maxPrice != null){
-            productList = productRepostitory.findByPriceLessThanEqual(maxPrice);
-        }
-
-        else if(minPrice != null && maxPrice != null){
-            productList = productRepostitory.findByPriceBetween(minPrice, maxPrice);
-        }
-        else {
-            productList = productRepostitory.findAll();
+        if (minPrice != null && maxPrice == null) {
+            productList = productService.findByPriceGreaterThanEqual(minPrice);
+        } else if (minPrice == null && maxPrice != null) {
+            productList = productService.findByPriceLessThanEqual(maxPrice);
+        } else if (minPrice != null && maxPrice != null) {
+            productList = productService.findByPriceBetween(minPrice, maxPrice);
+        } else {
+            productList = productService.findAll();
         }
 
         model.addAttribute("productList", productList);
         return "all_products";
     }
+
 
     @GetMapping("/new")
     public String addNewProductsForm(Model model) {
@@ -57,7 +53,7 @@ public class ProductController {
             return "redirect:/products";
 
         }
-        productRepostitory.save(product);
+        productService.save(product);
         return "redirect:/products";
     }
 

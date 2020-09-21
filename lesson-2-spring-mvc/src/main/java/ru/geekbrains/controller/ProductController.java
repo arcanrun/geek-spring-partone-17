@@ -1,49 +1,58 @@
 package ru.geekbrains.controller;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ru.geekbrains.persist.entity.Product;
-import ru.geekbrains.persist.repo.ProductRepostitory;
+import ru.geekbrains.service.ProductService;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/products")
 public class ProductController {
-    private ProductRepostitory productRepostitory;
+    private ProductService productService;
 
     @Autowired
-    public void setProductRepostitory(ProductRepostitory productRepostitory) {
-        this.productRepostitory = productRepostitory;
+    public void setProductService(ProductService productService) {
+        this.productService = productService;
     }
 
     @GetMapping
-    public String getAllProducts(Model model, @RequestParam(required = false) BigDecimal minPrice, @RequestParam(required = false) BigDecimal maxPrice) {
-        List<Product> productList;
-        if(minPrice != null && maxPrice == null){
-            productList = productRepostitory.findByPriceGreaterThanEqual(minPrice);
-        }
-        else if(minPrice == null && maxPrice != null){
-            productList = productRepostitory.findByPriceLessThanEqual(maxPrice);
-        }
-
-        else if(minPrice != null && maxPrice != null){
-            productList = productRepostitory.findByPriceBetween(minPrice, maxPrice);
-        }
-        else {
-            productList = productRepostitory.findAll();
-        }
-
-        model.addAttribute("productList", productList);
+    public String getAllProducts(
+            Model model,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Integer pageIndex,
+            @RequestParam(required = false, defaultValue = "5") Integer pageSize
+    ) {
+        System.out.println("pageSize===>" + pageSize);
+        Page<Product> productPage = productService.findAll(minPrice, maxPrice, pageIndex, pageSize);
+        model.addAttribute("productList", productPage);
         return "all_products";
     }
+
+    @GetMapping("/{id}")
+    public String editProduct(@PathVariable("id") Integer id, Model model) {
+        Optional<Product> productOptional = productService.findById(id);
+
+        if (!productOptional.isPresent()) {
+            return "redirect:/products";
+        }
+
+        Product product = productOptional.get();
+        model.addAttribute("product", product);
+
+        return "product_form";
+    }
+
 
     @GetMapping("/new")
     public String addNewProductsForm(Model model) {
@@ -51,13 +60,18 @@ public class ProductController {
         return "product_form";
     }
 
-    @PostMapping("/new")
+    @PostMapping("/update")
     public String addNewProduct(Product product) {
         if (product.getPrice().compareTo(BigDecimal.valueOf(0)) <= 0) {
             return "redirect:/products";
-
         }
-        productRepostitory.save(product);
+        productService.save(product);
+        return "redirect:/products";
+    }
+
+    @DeleteMapping("/{id}/delete")
+    public String deleteProduct(@PathVariable("id") Integer id) {
+        productService.deleteById(id);
         return "redirect:/products";
     }
 

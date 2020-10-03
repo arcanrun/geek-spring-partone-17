@@ -10,11 +10,13 @@
         <module name="spring-boot" />
         <module name="lesson-1-network-chat" />
         <module name="lesson-3-hibernate" />
+        <module name="demo" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="demo" options="-parameters" />
       <module name="spring-boot" options="-parameters" />
     </option>
   </component>

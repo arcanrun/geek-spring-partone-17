@@ -1,0 +1,36 @@
+GET http://localhost:8080/mvc-app/api/v1/product/all
+
+###
+
+GET http://localhost:8080/mvc-app/api/v1/product/all?pageIndex=1&maxPrice=22
+
+###
+
+GET http://localhost:8080/mvc-app/api/v1/product/3
+
+
+###
+
+POST http://localhost:8080/mvc-app/api/v1/product
+Content-Type: application/json
+
+{
+"title": "shirt",
+"price": 100.0
+}
+
+###
+
+PUT http://localhost:8080/mvc-app/api/v1/product
+Content-Type: application/json
+
+{
+"id": 2,
+  "title": "shirt",
+  "price": 100.0
+}
+
+###
+
+DELETE http://localhost:8080/mvc-app/api/v1/products/17/delete
+

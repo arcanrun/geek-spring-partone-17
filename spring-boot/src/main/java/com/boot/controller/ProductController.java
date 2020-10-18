@@ -6,6 +6,8 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +43,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     public String editProduct(@PathVariable("id") Integer id, Model model) throws ResourceNotFoundException {
         Optional<Product> productOptional = productService.findById(id);
 
@@ -56,12 +59,14 @@ public class ProductController {
 
 
     @GetMapping("/new")
+    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     public String addNewProductsForm(Model model) {
         model.addAttribute("product", new Product());
         return "product_form";
     }
 
     @PostMapping("/update")
+    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     public String addNewProduct(Product product) {
         if (product.getPrice().compareTo(BigDecimal.valueOf(0)) <= 0) {
             return "redirect:/products";
@@ -71,6 +76,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}/delete")
+    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     public String deleteProduct(@PathVariable("id") Integer id) {
         productService.deleteById(id);
         return "redirect:/products";
